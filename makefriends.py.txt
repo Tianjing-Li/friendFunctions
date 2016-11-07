@@ -1,0 +1,56 @@
+#!/usr/bin/python
+
+#import CGI handling modules
+import cgi, cgitb
+
+#method which generates all the users in the database and asks which ones
+#the current user would like to befriend, the list is then sent
+#to newfriends.py, which updates the friends.txt file
+
+def makingFriends(x):
+
+        #create instance of FieldStorage
+        form = cgi.FieldStorage()
+
+        #get current logged in username
+        userName = form.getvalue('user')
+
+        #open the users.txt file
+        with open('/home/2016/yliu236/public_html/users.txt', 'r') as userFile:
+                #split each line so there is no \n
+                userInfo = userFile.read().splitlines()
+
+        #HTML code
+        print "Content-type:text/html\r\n\r\n"
+        print '<html>'
+        print '<head>'
+        print '<title> Make some friends </title>'
+        print '</head>'
+        print '<body style=\"margin:42;font-family:arial;background-color:#333333;color:#d3ffce;\"alink=\"#fac7d0\" vlink=\"#fac7d0\"link=\"#faeb7\"> <br />'
+        print 'Check the boxes next to the people you want to be friends with! <br /> '
+        print '<form method=\"get\" action=\"newfriends.py\">'
+        print '<input type=\"hidden\" name=\"user\" value="%s">' %(userName)
+
+        #initialize counter to get users
+        counter = 0
+
+        #for every line in users.txt that is a user name, we print it
+        # with a checkbox
+        for line in userInfo:
+                if (counter%x==0):
+                        currentUser = line
+                        if (currentUser != userName):
+                                print '<input type=\"checkbox\" name=\"friend\" value=\"%s\">%s<br />' %(currentUser, currentUser)
+
+  #update counter every iteration
+                counter+=1
+
+        #submit button
+        print '<input type=\"submit\" value=\"Confirm\">'
+        print '<br /><br />'
+        print '<a href=\"http://cs.mcgill.ca/~echoin2/dashboard.py?user=%s\">'%(userName)
+        print 'Return to dashboard</a>'
+
+        print '</form>'
+        print '</body>'
+        print '</html>'

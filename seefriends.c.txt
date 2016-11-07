@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(){
+
+        //initialize file pointer to open friends.txt
+        FILE*  filePointer;
+        char String[500];
+
+        filePointer = fopen("friends.txt", "r");
+
+        //get query string from environment
+        char *data = getenv("QUERY_STRING");
+
+        //move pointer up
+        data+=5;
+
+        //initialize new character array to fit username
+        char userName[50];
+        //copy current username into string
+        strcpy(userName,data);
+
+        //HTML code content
+        printf("Content-Type:text/html\n\n");
+        printf("<html>");
+        printf("<head><title>Friendlist</title></head>");
+        printf("<body style=\"margin:42;font-family:arial;background-color:#333333;color:#d3ffce;\"alink=\"#fac7d0\" vlink=\"#fac7d0\"link=\"#faeb7\"> <br />");
+        printf("<form method=\"get\" action=\"friendprofile.py\">");
+        printf("<input type=\"hidden\" name=\"user\" value=\"%s\">",userName);
+        printf("Select a friend to see their profile <br />");
+
+        //gets each line of friends.txt to see which line the username is at
+        while (fgets(String,500,filePointer)!=NULL){
+
+                char *friend;
+                friend = strtok(String, " ");
+                if (!strcmp(friend,userName)){
+
+                        //for each friend, print a radio
+                        friend = strtok(NULL, " \n");
+                        while(friend!=NULL){
+                                printf("<input type=\"radio\" name=\"friend\" value=\"%s\">", friend);
+                                printf("%s <br />", friend);
+
+				//get next friend
+                                friend = strtok(NULL, " ");
+                        }
+                        break;
+               }
+        }
+
+        fclose(filePointer);
+
+        printf("<br /><input type=\"submit\" value=\"I\'m ready\">");
+        printf("<br /><br />");
+        printf("<a href=\"http://cs.mcgill.ca/~echoin2/dashboard.py?user=%s\">",userName);
+        printf("Return to dashboard</a>");
+
+        printf("</form>");
+        printf("</body>");
+        printf("</html>");
+
+        return 0;
+}
+
+
+
